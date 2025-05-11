@@ -162,21 +162,39 @@
                     throw new Error(`Failed to load ${filePath}: ${response.statusText}`);
                 }
                 const markdownText = await response.text();
-                // Remove the HTML h1 title from README.md as we have a main site title
-                const cleanedMarkdown = filePath === 'README.md' ? markdownText.replace(/<h1 align="center">.*<\/h1>/s, '') : markdownText;
-                document.getElementById('content').innerHTML = marked.parse(cleanedMarkdown);
+                const mainHeader = document.querySelector('header');
+                const siteTitleH1 = mainHeader.querySelector('h1');
 
-                // If loading README, update the header image if it exists
+                // If loading README.md, try to extract banner and replace/remove site H1
                 if (filePath === 'README.md') {
                     const readmeContentDiv = document.createElement('div');
-                    readmeContentDiv.innerHTML = marked.parse(markdownText); // Parse the original for image extraction
-                    const headerImg = readmeContentDiv.querySelector('div[align="center"] > img');
-                    const mainHeader = document.querySelector('header');
+                    readmeContentDiv.innerHTML = marked.parse(markdownText); 
+                    const headerImg = readmeContentDiv.querySelector('div[align="center"] > img[alt*="Banner"]');
+                    
                     if (headerImg) {
-                        const existingImg = mainHeader.querySelector('img');
-                        if (existingImg) existingImg.remove(); // Remove old if any
+                        // Remove existing static H1 if banner is found
+                        if (siteTitleH1) siteTitleH1.style.display = 'none'; 
+                        
+                        // Clear previous banner image if any, then add new one
+                        const existingHeaderImg = mainHeader.querySelector('img');
+                        if (existingHeaderImg) existingHeaderImg.remove();
                         mainHeader.insertBefore(headerImg.cloneNode(true), mainHeader.firstChild);
+                    } else {
+                        // If no banner in README, ensure static H1 is visible
+                        if (siteTitleH1) siteTitleH1.style.display = 'block';
+                        // Remove any previously loaded banner image
+                        const existingHeaderImg = mainHeader.querySelector('img');
+                        if (existingHeaderImg) existingHeaderImg.remove();
                     }
+                    // Remove the HTML h1 and the div containing the banner from the main content to avoid duplication
+                    const cleanedMarkdown = markdownText.replace(/<h1 align="center">.*<\/h1>/s, '').replace(/<div align="center">\s*<img src="docs\/images\/mcp-banner\.png"[^>]*>\s*<br><br>[\s\S]*?<\/div>/s, '');
+                    document.getElementById('content').innerHTML = marked.parse(cleanedMarkdown);
+                } else {
+                    // For other pages, ensure static H1 is visible and no banner from README is shown
+                    if (siteTitleH1) siteTitleH1.style.display = 'block';
+                    const existingHeaderImg = mainHeader.querySelector('img');
+                    if (existingHeaderImg) existingHeaderImg.remove();
+                    document.getElementById('content').innerHTML = marked.parse(markdownText);
                 }
 
             } catch (error) {
