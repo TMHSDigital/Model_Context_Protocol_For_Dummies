@@ -2,8 +2,12 @@
 
 *This research report was prepared by TM Hospitality Strategies, May 2025*
 
+<div align="center">
+  
 [![Model Context Protocol](https://img.shields.io/badge/Protocol-MCP-blue)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies)
 [![Research Report](https://img.shields.io/badge/Document-Research-orange)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies/blob/main/research-1.md)
+
+</div>
 
 ## Executive Summary
 
@@ -45,8 +49,12 @@ From the LLM's perspective, MCP servers function like an external tool library. 
 
 Because MCP is decoupled from any particular LLM API, agents and chat tools can mix and match models. For example, Claude Desktop, Microsoft Copilot, or custom Python agents can all consume the same MCP servers as long as they implement the protocol. Conversely, a single LLM can use multiple servers: an AI assistant could pull data from Google Drive and query a company database in one session, simply by calling two different MCP servers. In multi-agent frameworks, MCP servers act as shared middleware: agents invoke server tools (via JSON-RPC) as needed, and the servers return structured data that the agent incorporates back into its reasoning.
 
+<div align="center">
+  
 ![MCP Architecture](https://via.placeholder.com/800x400?text=Google+MCP+Toolbox+Architecture)
 *Figure: Google's open-source MCP "Toolbox for Databases" connects AI agents (via its ADK) to many database systems (Cloud SQL, Spanner, BigQuery, etc.) through a unified MCP server interface.*
+
+</div>
 
 ---
 
@@ -129,6 +137,8 @@ The ecosystem is rapidly expanding. There are community-built servers for CRM (S
 
 ## Implementation Comparison Table
 
+<div align="center">
+
 | **Server Implementation** | **Maintainer** | **Language** | **Key Capabilities** | **Use Cases / Notes** |
 | ------------------------- | -------------- | ------------ | -------------------- | --------------------- |
 | *Reference (Filesystem, Google Drive, Slack, etc.)* | Anthropic (GitHub) | TypeScript, Python | Generic demos: file I/O, search, DB queries, image gen, web, chat, etc. | Broad examples, official SDK usage. Good for prototyping; not hardened. |
@@ -137,6 +147,8 @@ The ecosystem is rapidly expanding. There are community-built servers for CRM (S
 | *Google DB Toolbox* | Google Cloud | Java/Python | Multi-DB queries (Spanner, BigQuery, Cloud SQL, etc.); integrates with ADK | Enterprise data access; used with Google ADK. |
 | *Docker MCP Server* | Docker Inc. | Go / Shell | Docker CLI actions: manage containers, images, networks | AI-driven DevOps and container management. |
 | *Community / Other* | Various (OSS) | Many | CRM (Stripe, Chargebee), CMS (Drupal, Ghost), spreadsheets (Excel), IoT (Home Assistant), code CI (CircleCI), etc. | Thousands of servers exist; pick per domain (see directory). |
+
+</div>
 
 ---
 
@@ -149,47 +161,3 @@ MCP is designed to be developer-friendly. Official SDKs are available in many la
 3. **Run the server** on a chosen transport. For local desktop use, many servers run on **stdio** as a subprocess. For example, a Node.js server can be launched via `node` or `npx` and will listen on its stdin/stdout. For remote deployment, servers can listen on HTTP+SSE on a port or domain.
 
 For example, in TypeScript one might use the MCP SDK to define a server and then launch it with:
-
-```bash
-npx @modelcontextprotocol/inspector node build/index.js
-```
-
-which starts an interactive MCP Inspector connected to your server. The Inspector tool (provided by Anthropic) is extremely helpful: it lets you list the server's resources/tools, invoke them, and debug the JSON-RPC messages. Alternatively, Claude Desktop users can add a server by editing the `mcpServers` section of the app's configuration (pointing to the server's executable and args).
-
-Because MCP uses standard I/O or HTTP, servers can be packaged in Docker containers or deployed on cloud platforms. Many implementations provide Docker images (e.g. GitHub's official server and others on Docker Hub) or Kubernetes Helm charts. Authentication and credentials are handled externally (e.g. AWS roles or OAuth tokens) – MCP itself only transmits data over its connection.
-
-### Tools & Frameworks
-
-In addition to the language SDKs, several frameworks have added MCP support. LangChain provides MCP adapters so that MCP tools can be used as LangChain Tools. JBang and Spring AI have support to easily run Java-based MCP servers. OpenAI's Agents SDK (Python) includes classes (`MCPServerStdio`, `MCPServerSse`) to connect to servers. Microsoft's Copilot Studio uses MCP servers via a "Connector" abstraction with enterprise controls. In short, existing AI/agent frameworks now treat MCP servers as first-class plugins.
-
----
-
-## Recent Developments and Industry Support
-
-Since its debut in late 2024, MCP has seen rapid adoption and support across the AI ecosystem. Anthropic open-sourced the specification, SDKs, and sample servers in Nov 2024, and shared pre-built servers for common tools like Google Drive, Slack, GitHub, Postgres and Puppeteer. Early adopters in industry include Block and Apollo, and developer platforms Zed, Replit, Codeium and Sourcegraph are integrating MCP to enhance code assistance.
-
-Notable 2025 milestones include:
-
-* **GitHub (Apr 2025):** Released the official "GitHub MCP Server", a complete Go-based server for GitHub APIs. This supersedes Anthropic's example and is now supported in VS Code Copilot.
-
-* **AWS (Apr 2025):** Added MCP support to its Amazon Q Developer CLI and open-sourced a set of "AWS MCP Servers" for cloud tasks. These servers embed AWS well-architected guidance, security checks, and cost-optimization prompts into AI assistants.
-
-* **Microsoft (Mar 2025):** Announced MCP integration in **Copilot Studio**. MCP servers can be added as enterprise-grade "Connector" components with Azure networking and DLP controls, letting agents query internal data sources through the MCP protocol.
-
-* **Google (2024–25):** Updated its AI toolkits to embrace MCP. The Google Cloud "Toolbox for Databases" now runs as an MCP server (permitting agents to query AlloyDB, Spanner, etc.). Their new Agent Development Kit (ADK) includes native MCP support, explicitly enabling "secure, two-way connections" between AI agents and data.
-
-* **OpenAI (2025):** The OpenAI Agents SDK (for its chat models) includes built-in MCP connectors. In fact, InfoQ reports that OpenAI and Google have publicly announced support for MCP, and frameworks like LangChain4j, Quarkus, Spring AI and ZenML quickly added MCP support in late 2024/early 2025.
-
-* **Ecosystem growth:** New directories and catalogs have emerged. Anthropic curates an official MCP Servers list on GitHub, while community sites (e.g. mcpserverfinder.com) index servers by language and category. Over 1000 MCP server projects now exist, reflecting broad community and vendor engagement.
-
----
-
-## Conclusion
-
-In summary, MCP servers are rapidly becoming the de facto way to plug AI systems into the real world. By providing a USB‑C‑like standard for data and tools, MCP is accelerating the creation of agentic AI workflows. Developers can build and deploy MCP servers using the rich SDKs and tools now available, and leverage a growing marketplace of existing servers in production.
-
----
-
-*This research report was prepared by TM Hospitality Strategies in May 2025.*
-
-**Sources:** Official MCP documentation and spec; Anthropic and Google announcements; GitHub and AWS blogs; Microsoft Copilot blog; AWS news; InfoQ tech news; and open-source GitHub repositories (modelcontextprotocol, docker/mcp-servers).
