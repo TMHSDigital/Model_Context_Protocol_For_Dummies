@@ -8,6 +8,10 @@
   <a href="https://github.com/TMHSDigital"><img src="https://img.shields.io/badge/Maintained%20by-TM%20Hospitality%20Strategies-brightgreen" alt="Maintained by TM Hospitality Strategies"></a>
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
   <a href="https://commonmark.org"><img src="https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg" alt="Made with Markdown"></a>
+  <br>
+  <img src="https://img.shields.io/github/last-commit/TMHSDigital/Model_Context_Protocol_For_Dummies" alt="GitHub last commit">
+  <img src="https://img.shields.io/github/issues/TMHSDigital/Model_Context_Protocol_For_Dummies" alt="GitHub issues">
+  <img src="https://img.shields.io/github/languages/top/TMHSDigital/Model_Context_Protocol_For_Dummies" alt="GitHub top language">
 </div>
 
 > A comprehensive guide to understanding and implementing the Model Context Protocol (MCP)
