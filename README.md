@@ -1,4 +1,4 @@
-# Model Context Protocol (MCP) For Dummies
+<h1 align="center">Model Context Protocol (MCP) For Dummies</h1>
 
 <div align="center">
   <img src="docs/images/mcp-banner.png" alt="Model Context Protocol Banner" width="100%">
