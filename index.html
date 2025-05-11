@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Context Protocol (MCP) For Dummies</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f8fa;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+        }
+        header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e4e8;
+            margin-bottom: 20px;
+        }
+        header img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+        nav {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 5px 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #0366d6;
+            font-weight: bold;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .content img { /* Style images loaded from markdown */
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #24292e;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background-color: rgba(27,31,35,.05);
+            padding: .2em .4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+        }
+        pre {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+        }
+        pre code {
+            display: inline;
+            padding: 0;
+            margin: 0;
+            overflow: visible;
+            line-height: inherit;
+            word-wrap: normal;
+            background-color: transparent;
+            border: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1em;
+        }
+        th, td {
+            border: 1px solid #dfe2e5;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f6f8fa;
+        }
+        blockquote {
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e4e8;
+            color: #6a737d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <!-- The main banner will be loaded from README.md content -->
+            <h1>Model Context Protocol (MCP) For Dummies</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="loadMarkdown('README.md')">Home (README)</a></li>
+                <li><a href="#" onclick="loadMarkdown('docs/architecture.md')">Architecture</a></li>
+                <li><a href="#" onclick="loadMarkdown('docs/features.md')">Features</a></li>
+                <li><a href="#" onclick="loadMarkdown('docs/implementations.md')">Implementations</a></li>
+                <li><a href="#" onclick="loadMarkdown('docs/development-guide.md')">Development Guide</a></li>
+                <li><a href="#" onclick="loadMarkdown('docs/use-cases.md')">Use Cases</a></li>
+                <li><a href="CONTRIBUTING.md" target="_blank">Contributing Guide</a></li>
+                <li><a href="CODE_OF_CONDUCT.md" target="_blank">Code of Conduct</a></li>
+                <li><a href="research-1.md" target="_blank">Research Report</a></li>
+            </ul>
+        </nav>
+        <div id="content" class="content">
+            <!-- Markdown content will be loaded here -->
+        </div>
+        <footer>
+            Maintained with ❤️ by <a href="https://github.com/TMHSDigital" target="_blank">TM Hospitality Strategies</a>.
+            <br>
+            Licensed under the <a href="LICENSE" target="_blank">MIT License</a>.
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        async function loadMarkdown(filePath) {
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${filePath}: ${response.statusText}`);
+                }
+                const markdownText = await response.text();
+                // Remove the HTML h1 title from README.md as we have a main site title
+                const cleanedMarkdown = filePath === 'README.md' ? markdownText.replace(/<h1 align="center">.*<\/h1>/s, '') : markdownText;
+                document.getElementById('content').innerHTML = marked.parse(cleanedMarkdown);
+
+                // If loading README, update the header image if it exists
+                if (filePath === 'README.md') {
+                    const readmeContentDiv = document.createElement('div');
+                    readmeContentDiv.innerHTML = marked.parse(markdownText); // Parse the original for image extraction
+                    const headerImg = readmeContentDiv.querySelector('div[align="center"] > img');
+                    const mainHeader = document.querySelector('header');
+                    if (headerImg) {
+                        const existingImg = mainHeader.querySelector('img');
+                        if (existingImg) existingImg.remove(); // Remove old if any
+                        mainHeader.insertBefore(headerImg.cloneNode(true), mainHeader.firstChild);
+                    }
+                }
+
+            } catch (error) {
+                document.getElementById('content').innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
+                console.error('Error loading markdown:', error);
+            }
+        }
+
+        // Load README.md by default
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMarkdown('README.md');
+        });
+    </script>
+</body>
+</html> 
