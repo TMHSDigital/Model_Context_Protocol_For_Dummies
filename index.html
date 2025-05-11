@@ -229,6 +229,34 @@
             display: inline-block;
             margin: 0 4px;
         }
+        /* Learning path styles */
+        .learning-path {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+        .learning-path h3 {
+            margin-top: 0;
+            color: #1890ff;
+            border-bottom: none;
+        }
+        .learning-path ol {
+            margin-bottom: 0;
+        }
+        .learning-path-item {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        /* Highlighted nav item */
+        .nav-highlight a {
+            background-color: #e6f7ff;
+            color: #1890ff !important;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #1890ff;
+        }
     </style>
 </head>
 <body>
@@ -240,6 +268,17 @@
         <nav>
             <ul>
                 <li><a href="#" onclick="loadMarkdown('README.md')">Home (README)</a></li>
+                <li class="nav-highlight"><a href="#" onclick="loadMarkdown('docs/getting-started.md')">🚀 Getting Started</a></li>
+                <li class="dropdown">
+                    <a href="#">Learning Path ▾</a>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="loadMarkdown('docs/getting-started.md')">1. Getting Started Guide</a>
+                        <a href="#" onclick="loadMarkdown('docs/architecture.md')">2. Architecture Details</a>
+                        <a href="#" onclick="loadMarkdown('research-1.md')">3. Technical Overview</a>
+                        <a href="#" onclick="loadMarkdown('docs/use-cases.md')">4. Use Cases</a>
+                        <a href="#" onclick="loadMarkdown('research-2.md')">5. Monday.com Integration</a>
+                    </div>
+                </li>
                 <li><a href="#" onclick="loadMarkdown('docs/architecture.md')">Architecture</a></li>
                 <li><a href="#" onclick="loadMarkdown('docs/features.md')">Features</a></li>
                 <li><a href="#" onclick="loadMarkdown('docs/implementations.md')">Implementations</a></li>
@@ -260,6 +299,15 @@
                 <li><a href="#" onclick="loadMarkdown('CODE_OF_CONDUCT.md')">Code of Conduct</a></li>
             </ul>
         </nav>
+        <div class="learning-path">
+            <h3>Recommended Learning Path</h3>
+            <ol>
+                <li class="learning-path-item"><a href="#" onclick="loadMarkdown('docs/getting-started.md')">Getting Started</a> - Visual explanation with diagrams</li>
+                <li class="learning-path-item"><a href="#" onclick="loadMarkdown('docs/architecture.md')">Architecture</a> - Understanding the protocol structure</li>
+                <li class="learning-path-item"><a href="#" onclick="loadCodeFile('examples/python/simple_server.py')">Code Examples</a> - See MCP in action</li>
+                <li class="learning-path-item"><a href="#" onclick="loadMarkdown('research-1.md')">Research Report</a> - Deep dive into technical details</li>
+            </ol>
+        </div>
         <div id="content" class="content">
             <!-- Markdown content will be loaded here -->
         </div>
@@ -278,7 +326,11 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <script>
+        // Initialize mermaid for sequence diagrams
+        mermaid.initialize({ startOnLoad: false });
+        
         // Toggle debug info with Ctrl+D
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'd') {
@@ -358,6 +410,29 @@
                     
                     // Post-process all pages for consistent styling
                     processBadges(contentElement);
+                    
+                    // Initialize mermaid diagrams if any
+                    if (filePath.endsWith('getting-started.md')) {
+                        setTimeout(() => {
+                            const mermaidDivs = document.querySelectorAll('.language-mermaid');
+                            mermaidDivs.forEach((element, index) => {
+                                const graphDefinition = element.textContent;
+                                const graphContainer = document.createElement('div');
+                                graphContainer.className = 'mermaid-diagram';
+                                graphContainer.id = `mermaid-diagram-${index}`;
+                                element.parentNode.replaceWith(graphContainer);
+                                
+                                try {
+                                    mermaid.render(`mermaid-svg-${index}`, graphDefinition).then(result => {
+                                        graphContainer.innerHTML = result.svg;
+                                    });
+                                } catch (error) {
+                                    console.error('Mermaid rendering error:', error);
+                                    graphContainer.innerHTML = `<p style="color:red;">Error rendering diagram: ${error.message}</p>`;
+                                }
+                            });
+                        }, 100);
+                    }
                     
                     // Specific handling for different document types
                     if (filePath.includes('research-')) {

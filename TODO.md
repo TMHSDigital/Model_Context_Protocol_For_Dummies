@@ -5,7 +5,7 @@
 - [x] Create MCP architecture banner image for README.md (see docs/images/README.txt)
 - [x] Implement Monday.com MCP server examples in TypeScript and Python
 - [ ] Add diagrams to architecture.md to visualize client-server interaction
-- [ ] Create a "Getting Started" guide with step-by-step first project walkthrough
+- [x] Create a "Getting Started" guide with step-by-step first project walkthrough
 - [ ] Build a complete end-to-end example that demonstrates all MCP capabilities
 
 ## Documentation Improvements

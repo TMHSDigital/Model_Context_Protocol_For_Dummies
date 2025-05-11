@@ -16,6 +16,17 @@
 
 > A comprehensive guide to understanding and implementing the Model Context Protocol (MCP)
 
+## 🚀 Start Here: Visual Learning Path
+
+New to MCP? Follow this learning path to quickly understand the protocol:
+
+1. **[Getting Started Guide](docs/getting-started.md)** - Visual explanation of MCP with diagrams and code walkthrough
+2. **[Architecture Details](docs/architecture.md)** - Deeper dive into the client-server architecture
+3. **[Code Examples](#quick-example)** - See MCP in action with working code
+4. **[Use Cases](docs/use-cases.md)** - Explore real-world applications
+
+The [Getting Started Guide](docs/getting-started.md) bridges the gap between MCP concepts and implementation with sequence diagrams and annotated code examples.
+
 ## What is MCP?
 
 Model Context Protocol (MCP) is an open standard (introduced in late 2024 by Anthropic) that **standardizes how AI models connect to data sources and tools**. This repository aims to provide a clear, comprehensive explanation of MCP, its architecture, implementations, and practical applications.
