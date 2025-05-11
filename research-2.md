@@ -1,13 +1,15 @@
 # Model Context Protocol (MCP) & Monday.com Integration: A Technical Feasibility Study
 
+<div align="center">
+
 *This research report was prepared by TM Hospitality Strategies, June 2025*
 
-<div align="center">
-  
-[![Model Context Protocol](https://img.shields.io/badge/Protocol-MCP-blue)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies)
-[![Research Report](https://img.shields.io/badge/Document-Research-orange)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies/blob/main/research-2.md)
-[![Integration](https://img.shields.io/badge/Integration-Monday.com-ff3366)](https://monday.com)
+</div>
 
+<div align="center">
+<a href="https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies"><img src="https://img.shields.io/badge/Protocol-MCP-blue" alt="Model Context Protocol"></a>
+<a href="https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies/blob/main/research-2.md"><img src="https://img.shields.io/badge/Document-Research-orange" alt="Research Report"></a>
+<a href="https://monday.com"><img src="https://img.shields.io/badge/Integration-Monday.com-ff3366" alt="Integration"></a>
 </div>
 
 ## Executive Summary

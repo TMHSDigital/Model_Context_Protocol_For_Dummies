@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Context Protocol (MCP) For Dummies</title>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -48,6 +49,7 @@
         }
         nav ul li {
             margin: 5px 10px;
+            position: relative;
         }
         nav ul li a {
             text-decoration: none;
@@ -57,6 +59,34 @@
         nav ul li a:hover {
             text-decoration: underline;
         }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            left: 0;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: #0366d6;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            font-weight: normal;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            text-decoration: none;
+        }
         .content {
             margin-top: 20px;
         }
@@ -64,6 +94,34 @@
             max-width: 100%;
             height: auto;
             border-radius: 6px;
+            display: block;
+            margin: 20px auto;
+        }
+        /* Special handling for placeholder images */
+        .content img[src*="placeholder"] {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 20px auto;
+            display: block;
+            background-color: #f6f8fa;
+            border: 1px solid #ddd;
+        }
+        /* Style for the center divs */
+        .content div[align="center"] {
+            text-align: center;
+            margin: 20px 0;
+            display: block;
+        }
+        /* Style for the badges in research documents */
+        .content div[align="center"] a {
+            display: inline-block;
+            margin: 0 4px;
+        }
+        /* Style for the badge images */
+        .content div[align="center"] a img {
+            display: inline-block;
+            margin: 5px 0;
         }
         h1, h2, h3, h4, h5, h6 {
             color: #24292e;
@@ -138,13 +196,27 @@
                 <li><a href="#" onclick="loadMarkdown('docs/implementations.md')">Implementations</a></li>
                 <li><a href="#" onclick="loadMarkdown('docs/development-guide.md')">Development Guide</a></li>
                 <li><a href="#" onclick="loadMarkdown('docs/use-cases.md')">Use Cases</a></li>
+                <li><a href="#" onclick="loadMarkdown('research-1.md')">Research Report</a></li>
+                <li><a href="#" onclick="loadMarkdown('research-2.md')">Monday.com Integration</a></li>
+                <li class="dropdown">
+                    <a href="#">Code Examples ▾</a>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="loadCodeFile('examples/typescript/simple-server.ts')">Weather Server (TS)</a>
+                        <a href="#" onclick="loadCodeFile('examples/typescript/monday-server.ts')">Monday.com Server (TS)</a>
+                        <a href="#" onclick="loadCodeFile('examples/python/simple_server.py')">Note-taking Server (PY)</a>
+                        <a href="#" onclick="loadCodeFile('examples/python/monday_server.py')">Monday.com Server (PY)</a>
+                    </div>
+                </li>
                 <li><a href="#" onclick="loadMarkdown('CONTRIBUTING.md')">Contributing Guide</a></li>
                 <li><a href="#" onclick="loadMarkdown('CODE_OF_CONDUCT.md')">Code of Conduct</a></li>
-                <li><a href="#" onclick="loadMarkdown('research-1.md')">Research Report</a></li>
             </ul>
         </nav>
         <div id="content" class="content">
             <!-- Markdown content will be loaded here -->
+        </div>
+        <div id="debug" style="display: none; margin-top: 20px; padding: 10px; background-color: #f8f8f8; border: 1px solid #ddd; border-radius: 4px;">
+            <h4>Debug Information</h4>
+            <pre id="debug-info"></pre>
         </div>
         <footer>
             Maintained with ❤️ by <a href="https://github.com/TMHSDigital" target="_blank">TM Hospitality Strategies</a>.
@@ -154,14 +226,50 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
     <script>
+        // Toggle debug info with Ctrl+D
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                const debugEl = document.getElementById('debug');
+                debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+
+        function logDebug(message) {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.textContent += `[${timestamp}] ${message}\n`;
+            console.log(`[DEBUG] ${message}`);
+        }
+
+        // Configure marked to allow HTML
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            headerPrefix: '',
+            mangle: true,
+            pedantic: false,
+            sanitize: false,  // Allow HTML in markdown
+            smartLists: true,
+            smartypants: false,
+            xhtml: false
+        });
+
         async function loadMarkdown(filePath) {
             try {
+                logDebug(`Loading markdown file: ${filePath}`);
                 const response = await fetch(filePath);
                 if (!response.ok) {
                     throw new Error(`Failed to load ${filePath}: ${response.statusText}`);
                 }
                 const markdownText = await response.text();
+                logDebug(`Markdown file loaded: ${filePath} (${markdownText.length} bytes)`);
+                
                 const mainHeader = document.querySelector('header');
                 const siteTitleH1 = mainHeader.querySelector('h1');
 
@@ -194,17 +302,93 @@
                     if (siteTitleH1) siteTitleH1.style.display = 'block';
                     const existingHeaderImg = mainHeader.querySelector('img');
                     if (existingHeaderImg) existingHeaderImg.remove();
-                    document.getElementById('content').innerHTML = marked.parse(markdownText);
+                    
+                    // Special handling for research files to ensure HTML badges render correctly
+                    if (filePath.includes('research-')) {
+                        logDebug(`Rendering research file with special handling: ${filePath}`);
+                        const contentElement = document.getElementById('content');
+                        
+                        // Parse markdown with HTML enabled
+                        const renderedContent = marked.parse(markdownText);
+                        contentElement.innerHTML = renderedContent;
+                        logDebug(`Research content rendered, character count: ${renderedContent.length}`);
+                        
+                        // Process center divs to ensure badges are displayed properly
+                        const centerDivs = contentElement.querySelectorAll('div[align="center"]');
+                        logDebug(`Found ${centerDivs.length} center-aligned divs`);
+                        
+                        // Ensure badges in center divs are displayed properly
+                        centerDivs.forEach(div => {
+                            // Find all badges (links with img inside them)
+                            const badgeLinks = div.querySelectorAll('a');
+                            logDebug(`Processing div with ${badgeLinks.length} badge links`);
+                            
+                            // If this div contains badges, ensure they're displayed inline
+                            if (badgeLinks.length > 0) {
+                                // Apply styling to ensure badges display in a row
+                                badgeLinks.forEach(link => {
+                                    link.style.display = 'inline-block';
+                                    link.style.margin = '0 4px';
+                                    
+                                    // Make sure the img inside is also inline
+                                    const img = link.querySelector('img');
+                                    if (img) {
+                                        img.style.display = 'inline-block';
+                                        img.style.margin = '5px 0';
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Fix placeholder images (especially in research-2.md)
+                        const placeholderImages = contentElement.querySelectorAll('img[src*="placeholder"]');
+                        logDebug(`Found ${placeholderImages.length} placeholder images`);
+                        
+                        // Add any special styling for badges
+                        const badges = contentElement.querySelectorAll('a img[src*="img.shields.io"]');
+                        logDebug(`Found ${badges.length} badge images`);
+                    } else {
+                        document.getElementById('content').innerHTML = marked.parse(markdownText);
+                    }
                 }
 
             } catch (error) {
                 document.getElementById('content').innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
                 console.error('Error loading markdown:', error);
+                logDebug(`ERROR: ${error.message}`);
+            }
+        }
+
+        async function loadCodeFile(filePath) {
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${filePath}: ${response.statusText}`);
+                }
+                const codeText = await response.text();
+                const fileExtension = filePath.split('.').pop();
+                const language = fileExtension === 'ts' ? 'typescript' : 
+                                fileExtension === 'py' ? 'python' : 'plaintext';
+                
+                const fileName = filePath.split('/').pop();
+                const fileNameDisplay = `<h2>${fileName}</h2>`;
+                
+                // Style the code using PrismJS
+                const highlightedCode = Prism.highlight(codeText, Prism.languages[language], language);
+                document.getElementById('content').innerHTML = `
+                    ${fileNameDisplay}
+                    <p>Path: <code>${filePath}</code></p>
+                    <pre><code class="language-${language}">${highlightedCode}</code></pre>
+                `;
+            } catch (error) {
+                document.getElementById('content').innerHTML = `<p style="color:red;">Error loading code file: ${error.message}</p>`;
+                console.error('Error loading code file:', error);
             }
         }
 
         // Load README.md by default
         document.addEventListener('DOMContentLoaded', () => {
+            logDebug('Page loaded, loading README.md');
             loadMarkdown('README.md');
         });
     </script>

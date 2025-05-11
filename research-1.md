@@ -1,12 +1,12 @@
 # Model Context Protocol (MCP): A Technical Overview
 
+<div align="center">
 *This research report was prepared by TM Hospitality Strategies, May 2025*
+</div>
 
 <div align="center">
-  
-[![Model Context Protocol](https://img.shields.io/badge/Protocol-MCP-blue)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies)
-[![Research Report](https://img.shields.io/badge/Document-Research-orange)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies/blob/main/research-1.md)
-
+<a href="https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies"><img src="https://img.shields.io/badge/Protocol-MCP-blue" alt="Model Context Protocol"></a>
+<a href="https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies/blob/main/research-1.md"><img src="https://img.shields.io/badge/Document-Research-orange" alt="Research Report"></a>
 </div>
 
 ## Executive Summary
