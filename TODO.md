@@ -2,7 +2,7 @@
 
 ## High Priority
 
-- [ ] Create MCP architecture banner image for README.md (see docs/images/README.txt)
+- [x] Create MCP architecture banner image for README.md (see docs/images/README.txt)
 - [ ] Add diagrams to architecture.md to visualize client-server interaction
 - [ ] Create a "Getting Started" guide with step-by-step first project walkthrough
 - [ ] Build a complete end-to-end example that demonstrates all MCP capabilities
