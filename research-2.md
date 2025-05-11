@@ -1,24 +1,38 @@
-# Integrating Monday.com with AI Agents Using the Model Context Protocol: A Technical Feasibility Study
+# Model Context Protocol (MCP) & Monday.com Integration: A Technical Feasibility Study
+
+*This research report was prepared by TM Hospitality Strategies, June 2025*
+
+<div align="center">
+  
+[![Model Context Protocol](https://img.shields.io/badge/Protocol-MCP-blue)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies)
+[![Research Report](https://img.shields.io/badge/Document-Research-orange)](https://github.com/TMHSDigital/Model_Context_Protocol_For_Dummies/blob/main/research-2.md)
+[![Integration](https://img.shields.io/badge/Integration-Monday.com-ff3366)](https://monday.com)
+
+</div>
+
+## Executive Summary
 
 This research report explores the integration of Monday.com's project management platform with AI systems through the Model Context Protocol (MCP). The analysis examines the technical feasibility, potential benefits, and implementation strategies for creating a bridge between Monday.com's robust project management capabilities and AI-powered assistants. By enabling AI agents to interact directly with Monday.com, organizations can unlock new possibilities for automation, insights, and natural language interactions within their project workflows.
+
+---
 
 ## Monday.com API & MCP Server Mapping
 
 ### Core API Structure and Objects
 
-Monday.com's platform API is built on GraphQL, offering flexibility in querying only the data needed for specific operations[7]. The API provides access to core objects essential for project management functionality:
+Monday.com's platform API is built on GraphQL, offering flexibility in querying only the data needed for specific operations. The API provides access to core objects essential for project management functionality:
 
-- **Boards**: The fundamental containers for projects and workflows that organize items into groups[8]
-- **Items**: The basic units of work within boards (tasks, projects, deliverables) that contain column values[1]
+- **Boards**: The fundamental containers for projects and workflows that organize items into groups
+- **Items**: The basic units of work within boards (tasks, projects, deliverables) that contain column values
 - **Columns**: Various data fields attached to items (status, person, date, etc.)
 - **Updates**: Comments and activity logs associated with items
 - **Users**: Team members who can be assigned to items
 
-Monday.com enforces several API rate limits to ensure system reliability, including complexity limits for query weight, daily call limits based on subscription tier, minute rate limits, concurrency limits, and IP-based limits[2]. These limitations would need to be carefully managed when designing an MCP server to avoid disruptions in service.
+Monday.com enforces several API rate limits to ensure system reliability, including complexity limits for query weight, daily call limits based on subscription tier, minute rate limits, concurrency limits, and IP-based limits. These limitations would need to be carefully managed when designing an MCP server to avoid disruptions in service.
 
 ### Mapping to MCP Resources
 
-MCP Resources function as read-only data sources that an AI model can access without causing side effects[5]. For a Monday.com MCP server, potential resources could include:
+MCP Resources function as read-only data sources that an AI model can access without causing side effects. For a Monday.com MCP server, potential resources could include:
 
 1. **Board Resources**:
    - `get_board_structure` - Retrieves column configurations and group layouts
@@ -40,7 +54,7 @@ These resources would translate Monday.com's GraphQL responses into standardized
 
 ### Defining Monday.com Actions as MCP Tools
 
-MCP Tools are callable functions that can perform actions and trigger side effects[6]. These would map to Monday.com's mutation operations:
+MCP Tools are callable functions that can perform actions and trigger side effects. These would map to Monday.com's mutation operations:
 
 1. **Item Management Tools**:
    - `create_item` (params: board_id, group_id, item_name, column_values)
@@ -58,7 +72,7 @@ MCP Tools are callable functions that can perform actions and trigger side effec
    - `add_user_to_board` (params: board_id, user_id)
    - `create_group` (params: board_id, group_name)
 
-The standard MCP tool call format would apply, with requests following the JSON-RPC structure demonstrated in the documentation[6]:
+The standard MCP tool call format would apply, with requests following the JSON-RPC structure:
 
 ```json
 {
@@ -82,7 +96,7 @@ The standard MCP tool call format would apply, with requests following the JSON-
 
 ### MCP Prompts for Project Management Workflows
 
-MCP Prompts enable standardized multi-step workflows[5]. For Monday.com, these could include:
+MCP Prompts enable standardized multi-step workflows. For Monday.com, these could include:
 
 1. **Project Initiation Workflow**:
    - Creating a board from template
@@ -98,6 +112,8 @@ MCP Prompts enable standardized multi-step workflows[5]. For Monday.com, these c
    - Identifying tasks at risk based on progress
    - Creating escalation items
    - Notifying stakeholders via updates
+
+---
 
 ## Technical Implementation of a Monday.com MCP Server
 
@@ -129,11 +145,11 @@ This approach maintains security while allowing the MCP client (and by extension
 
 ### Managing API Rate Limits
 
-The Monday.com API enforces several types of rate limits that an MCP server must respect[2]:
+The Monday.com API enforces several types of rate limits that an MCP server must respect:
 
 1. **Complexity Budget**: The server should optimize queries to request only necessary data and avoid deeply nested queries.
 
-2. **Daily Call Limits**: The server should implement a token bucket system to track usage against different subscription tiers (Free: 200 calls, Basic/Standard: 1,000 calls, Pro: 10,000 calls, Enterprise: 25,000 calls)[2].
+2. **Daily Call Limits**: The server should implement a token bucket system to track usage against different subscription tiers (Free: 200 calls, Basic/Standard: 1,000 calls, Pro: 10,000 calls, Enterprise: 25,000 calls).
 
 3. **Minute Rate Limit**: Implementation of exponential backoff and respecting the Retry-After header when rate limited.
 
@@ -141,7 +157,7 @@ The Monday.com API enforces several types of rate limits that an MCP server must
 
 5. **IP Limit**: Distribution of requests across multiple IPs for high-volume scenarios.
 
-Best practices include caching frequently accessed data to reduce API calls and implementing intelligent retry strategies that respect the retry_in_seconds field in error responses[2].
+Best practices include caching frequently accessed data to reduce API calls and implementing intelligent retry strategies that respect the retry_in_seconds field in error responses.
 
 ### Handling Monday.com's Flexible Data Structures
 
@@ -150,6 +166,8 @@ Monday.com's flexible board configurations present a challenge for standardized 
 1. Implement a schema mapping layer that translates between Monday.com's dynamic structures and standardized MCP schemas
 2. Cache board structure definitions to understand the semantic meaning of columns
 3. Provide metadata in resource responses to help AI models understand the context and meaning of returned data
+
+---
 
 ## Project Management Use Cases & Benefits
 
@@ -203,6 +221,8 @@ AI models could leverage MCP access to provide deeper project insights:
 
 3. **Process Improvement**: Analyzing successful vs. delayed projects to recommend workflow optimizations.
 
+---
+
 ## Challenges & Considerations
 
 ### Managing Complex Board Configurations
@@ -223,7 +243,7 @@ Integrating Monday.com with AI systems raises privacy considerations:
 
 1. **Data Minimization**: The MCP server should retrieve only necessary data to fulfill specific functions.
 
-2. **Compliance with Monday.com's API Terms**: Respecting rate limits[2] and usage policies to maintain service availability.
+2. **Compliance with Monday.com's API Terms**: Respecting rate limits and usage policies to maintain service availability.
 
 3. **User Permission Management**: Ensuring the MCP server respects Monday.com's permission model and doesn't expose restricted data.
 
@@ -231,7 +251,7 @@ Integrating Monday.com with AI systems raises privacy considerations:
 
 Some functional limitations in the Monday.com API would affect the MCP implementation:
 
-1. **Column-Specific Updates**: Currently, the Monday.com API does not support creating updates on specific columns, only on the item itself[3]. This limits the ability to implement column-focused MCP tools.
+1. **Column-Specific Updates**: Currently, the Monday.com API does not support creating updates on specific columns, only on the item itself. This limits the ability to implement column-focused MCP tools.
 
 2. **Complex Mutations**: Some operations that are simple in the UI might require multiple API calls when implemented through MCP tools.
 
@@ -245,15 +265,17 @@ For a truly interactive experience, the MCP server would need to handle real-tim
 
 3. **State Management**: Maintaining a consistent state between Monday.com and AI systems interacting through MCP.
 
+---
+
 ## Existing Ecosystem & Comparative Analysis
 
 ### Current AI Capabilities in Monday.com
 
-Monday.com has begun implementing AI features, primarily using Microsoft Azure OpenAI[9]:
+Monday.com has begun implementing AI features, primarily using Microsoft Azure OpenAI:
 
-1. **AI Automations**: Including actions like assigning labels, summarizing text, improving text, extracting information, writing with AI, detecting sentiment, and translating text[9].
+1. **AI Automations**: Including actions like assigning labels, summarizing text, improving text, extracting information, writing with AI, detecting sentiment, and translating text.
 
-2. **AI Blocks**: Column-specific AI capabilities integrated into boards[9].
+2. **AI Blocks**: Column-specific AI capabilities integrated into boards.
 
 These native capabilities provide basic AI functionality but lack the comprehensive reasoning and contextual understanding that an MCP integration with advanced AI models could provide.
 
@@ -261,13 +283,15 @@ These native capabilities provide basic AI functionality but lack the comprehens
 
 The Model Context Protocol offers several advantages over custom integrations:
 
-1. **Standardization**: Using MCP creates a consistent interface that works across multiple AI models and applications[4].
+1. **Standardization**: Using MCP creates a consistent interface that works across multiple AI models and applications.
 
-2. **Extensibility**: The same MCP server could be used by different AI assistants and tools without modification[5].
+2. **Extensibility**: The same MCP server could be used by different AI assistants and tools without modification.
 
-3. **Contextual Awareness**: MCP allows AI systems to maintain context as they move between different tools and datasets[4].
+3. **Contextual Awareness**: MCP allows AI systems to maintain context as they move between different tools and datasets.
 
-4. **Reduced Integration Complexity**: Following MCP transforms the M×N integration problem (M apps × N data sources) into an M+N problem by standardizing the connection protocol[5].
+4. **Reduced Integration Complexity**: Following MCP transforms the M×N integration problem (M apps × N data sources) into an M+N problem by standardizing the connection protocol.
+
+---
 
 ## Conclusion
 
@@ -275,118 +299,11 @@ Integrating Monday.com with AI agents through the Model Context Protocol represe
 
 The technical implementation, while challenging due to Monday.com's flexible structure and API limitations, is feasible with careful attention to authentication, rate limiting, and data mapping. The resulting integration would enable AI assistants to understand project context, manage tasks through natural language, generate insights, and create connections across the project management ecosystem.
 
-As both Monday.com continues to expand its AI capabilities[9] and the MCP ecosystem grows[4][5], organizations that establish this integration early will be well-positioned to benefit from increasingly sophisticated AI-assisted project management workflows. The standardization offered by MCP provides a future-proof approach that can evolve alongside advances in AI models and project management practices.
+As both Monday.com continues to expand its AI capabilities and the MCP ecosystem grows, organizations that establish this integration early will be well-positioned to benefit from increasingly sophisticated AI-assisted project management workflows. The standardization offered by MCP provides a future-proof approach that can evolve alongside advances in AI models and project management practices.
 
-Citations:
-[1] https://developer.monday.com/api-reference/reference/items
-[2] https://support.monday.com/hc/en-us/articles/26471164460690-API-Rate-Limits
-[3] https://community.monday.com/t/add-an-update-to-a-status-column-for-an-item-on-a-board-using-the-api/63359
-[4] https://www.anthropic.com/news/model-context-protocol
-[5] https://www.philschmid.de/mcp-introduction
-[6] https://www.speakeasy.com/mcp/tools
-[7] https://developer.monday.com/api-reference/docs/introduction-to-graphql
-[8] https://developer.monday.com/api-reference/reference/boards
-[9] https://support.monday.com/hc/en-us/articles/11512670770834-Get-started-with-AI
-[10] https://mcp.so/server/Jira-MCP-Server
-[11] https://rollout.com/integration-guides/monday/api-essentials
-[12] https://developer.monday.com/api-reference/reference/about-the-api-reference
-[13] https://modelcontextprotocol.io/introduction
-[14] https://developer.monday.com/apps/docs/custom-actions
-[15] https://modelcontextprotocol.io/specification/2025-03-26
-[16] https://support.monday.com/hc/en-us/articles/360013465599-API-Quickstart-Tutorial-Javascript
-[17] https://community.monday.com/t/getting-data-from-monday-api/78124
-[18] https://community.monday.com/t/save-objects-using-storage-api/12136
-[19] https://endgrate.com/blog/using-the-monday.com-api-to-get-users-in-python
-[20] https://community.monday.com/t/board-item-permissions-via-api/77158
-[21] https://community.monday.com/t/bulk-update-of-items-through-api/6763
-[22] https://community.monday.com/t/how-to-loop-a-paginated-query-to-get-more-results-than-api-limit/105776
-[23] https://community.monday.com/t/monday-api-select-items-in-board-where-last-updated-user-is-not-me/101744
-[24] https://support.monday.com/hc/en-us/articles/360013483119-API-Quickstart-Tutorial-Python
-[25] https://developer.monday.com/api-reference/docs/rate-limits
-[26] https://community.monday.com/t/api-get-items-from-board-by-created-or-updated-date/41625
-[27] https://community.monday.com/t/custom-action-code-example/38088
-[28] https://community.monday.com/t/rate-limit-improvements/105068
-[29] https://community.monday.com/t/update-an-item-on-a-board/10960
-[30] https://developer.monday.com/apps/docs/actions-recipes
-[31] https://www.youtube.com/watch?v=7j_NE6Pjv-E
-[32] https://blog.treblle.com/model-context-protocol-guide/
-[33] https://openai.github.io/openai-agents-python/mcp/
-[34] https://modelcontextprotocol.io/docs/concepts/resources
-[35] https://diamantai.substack.com/p/model-context-protocol-mcp-explained
-[36] https://glama.ai/mcp/servers/@melvincarvalho/mcpjs
-[37] https://venturebeat.com/ai/mcp-and-the-innovation-paradox-why-open-standards-will-save-ai-from-itself/
-[38] https://microsoft.github.io/genaiscript/blog/mcp-resources/
-[39] https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/introducing-model-context-protocol-mcp-in-copilot-studio-simplified-integration-with-ai-apps-and-agents/
-[40] https://github.com/shanejonas/openrpc-mpc-server
-[41] https://google.github.io/adk-docs/tools/mcp-tools/
-[42] https://www.seangoedecke.com/model-context-protocol/
-[43] https://stackoverflow.com/questions/67439159/how-do-i-create-a-new-board-item-in-monday-com-w-column-values-code-is-not-wor
-[44] https://support.monday.com/hc/en-us/articles/360002144900-User-types-explained
-[45] https://www.youtube.com/watch?v=lu_0Ize4hm0
-[46] https://developer.monday.com/api-reference/reference/workspaces
-[47] https://community.monday.com/t/access-to-monday-com-graphql-api-schema/23819
-[48] https://developer.monday.com/api-reference/docs/basics
-[49] https://developer.monday.com/api-reference/reference/column-values-v2
-[50] https://developer.monday.com/api-reference/reference/users
-[51] https://developer.monday.com/api-reference/
-[52] https://developer.monday.com/api-reference/docs/authentication
-[53] https://developer.monday.com/apps/docs/product
-[54] https://developer.monday.com/apps/docs/oauth
-[55] https://community.monday.com/t/is-it-possible-to-notify-a-team-via-api/68241
-[56] https://community.monday.com/t/running-graphql-api-query-how-can-you-return-values-selected-from-another-board/81037
-[57] https://community.monday.com/t/looking-for-column-type-sample-input-for-few-of-the-column-types/36295
-[58] https://community.monday.com/t/how-to-loop-through-subitems-ids-of-an-item-of-a-board-using-api/66081
-[59] https://community.monday.com/t/is-it-possible-to-create-an-automation-using-the-graphql-api/37572
-[60] https://community.monday.com/t/notification-handling-via-graphql/13730
-[61] https://community.monday.com/t/graphql-query-for-all-items-in-a-board-that-have-a-particular-column-value/21338
-[62] https://support.monday.com/hc/en-us/articles/115005310285-Column-types-available-on-monday-com
-[63] https://community.monday.com/t/wanted-same-sequence-of-subitems-in-graphql-api-as-displayed-on-monday-com/49553
-[64] https://www.youtube.com/watch?v=CxnjxhagQbQ
-[65] https://developer.monday.com/api-reference/reference/notification
-[66] https://github.com/George5562/Jira-MCP-Server
-[67] https://github.com/wwwaldo/mcp-asana
-[68] https://www.youtube.com/watch?v=sG8cBz4TzOY
-[69] https://github.com/sooperset/mcp-atlassian
-[70] https://mcp.pipedream.com/app/asana
-[71] https://www.youtube.com/watch?v=u5VwWDq7wJ0
-[72] https://apidog.com/blog/jira-mcp-server/
-[73] https://mcp.so/server/mcp-asana
-[74] https://monday.com/marketplace/10000313
-[75] https://glama.ai/mcp/servers/@CamdenClark/jira-mcp
-[76] https://zapier.com/mcp/asana
-[77] https://monday.com/blog/crm-and-sales/ai-sales/
-[78] https://community.monday.com/t/is-there-any-way-to-find-workspace-id-from-monday-com-application-ui/35894
-[79] https://community.monday.com/t/webhook-creation-with-change-subitem-column-value-event-returns-null/51686
-[80] https://www.youtube.com/watch?v=27_R-hgrDgU
-[81] https://community.monday.com/t/structure-of-workspaces-board-folders-boards/20224
-[82] https://www.youtube.com/watch?v=6GyN2KsBgto
-[83] https://developer.monday.com/api-reference/reference/people
-[84] https://community.monday.com/t/can-i-query-all-boards-within-a-workspace/22828
-[85] https://developer.monday.com/api-reference/reference/webhooks
-[86] https://github.com/modelcontextprotocol
-[87] https://docs.anthropic.com/en/docs/agents-and-tools/mcp
-[88] https://milvus.io/ai-quick-reference/how-is-jsonrpc-used-in-the-model-context-protocol
-[89] https://community.monday.com/t/email-notification-for-multiple-columns-via-automation/71120
-[90] https://community.monday.com/t/notification-automation-for-all-changes/39287
-[91] https://community.monday.com/t/how-can-i-get-list-of-workspaces-boards-subscribed-by-an-user/102511
-[92] https://support.monday.com/hc/en-us/articles/360000227739-Alerts-and-Reminders-with-Automations
-[93] https://support.monday.com/hc/en-us/articles/360005144659-Does-monday-com-have-an-API
-[94] https://community.monday.com/t/retrieving-all-columns-from-a-board/69422
-[95] https://community.monday.com/t/new-to-graphql-and-struggling/75976
-[96] https://community.monday.com/t/using-api-to-get-board-and-group-data-combined/67717
-[97] https://community.monday.com/t/how-to-get-graphql-column-types-in-schema-generation/62084
-[98] https://community.monday.com/t/best-way-to-get-all-the-sub-items-from-a-parent-item/8585
-[99] https://community.monday.com/t/programatically-update-automations-integrations-on-board-using-api/8970
-[100] https://monday.com/w/ai
-[101] https://monday.com/blog/project-management/ai-integration/
-[102] https://developer.monday.com/apps/docs/ai-assistant
-[103] https://deview-studios.com/top-8-use-cases-for-ai-in-monday-com/
-[104] https://mcp.so/server/mcp-server-asana
-[105] https://zapier.com/apps/monday/integrations/one-ai
-[106] https://community.monday.com/t/create-user-person-using-graphql/33827
-[107] https://community.monday.com/t/graphql-query-assistance-on-activity-log-brand-new-user/58199
-[108] https://community.monday.com/t/get-email-addresses-of-all-users-in-people-columns-of-an-item/71466
-[109] https://community.zapier.com/show-tell-5/guide-how-to-use-the-monday-graphql-api-in-zaps-with-the-webhooks-app-14324
+<div align="center">
+  
+![MCP Monday.com Integration](https://via.placeholder.com/800x400?text=Monday.com+MCP+Architecture)
+*Figure: Conceptual architecture showing how Monday.com integrates with AI systems through the Model Context Protocol*
 
----
-Answer from Perplexity: pplx.ai/share
+</div>

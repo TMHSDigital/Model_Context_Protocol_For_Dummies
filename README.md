@@ -37,13 +37,17 @@ Model_Context_Protocol_For_Dummies/
 │   └── use-cases.md               # Real-world applications and examples
 ├── examples/                      # Code examples
 │   ├── typescript/                # TypeScript examples
-│   │   └── simple-server.ts       # Weather data MCP server
+│   │   ├── simple-server.ts       # Weather data MCP server
+│   │   └── monday-server.ts       # Monday.com integration MCP server
 │   └── python/                    # Python examples
-│       └── simple_server.py       # Note-taking MCP server
+│       ├── simple_server.py       # Note-taking MCP server
+│       └── monday_server.py       # Monday.com integration MCP server
 ├── CODE_OF_CONDUCT.md             # Code of conduct
 ├── CONTRIBUTING.md                # Contribution guidelines
 ├── LICENSE                        # MIT License
-└── README.md                      # This file
+├── README.md                      # This file
+└── research-1.md                  # Technical overview of MCP
+└── research-2.md                  # Monday.com integration research
 ```
 
 ## Getting Started
@@ -58,6 +62,7 @@ Browse the repository to learn about:
 | [Development Guide](docs/development-guide.md) | Building and deploying your own MCP servers |
 | [Use Cases](docs/use-cases.md) | Real-world applications and examples |
 | [Research Report](research-1.md) | Comprehensive technical overview of MCP |
+| [Monday.com Integration](research-2.md) | Technical feasibility study on Monday.com MCP integration |
 
 ## Quick Example
 
@@ -95,6 +100,37 @@ server.registerToolHandler({
 
 server.listen();
 ```
+
+## Integration Examples
+
+### Monday.com Integration
+
+We've implemented an MCP server for Monday.com that demonstrates how to connect AI models to project management data:
+
+```typescript
+// Sample Monday.com MCP tool call
+const response = await mondayServer.callTool({
+  name: 'create_item',
+  parameters: {
+    board_id: 1234567890,
+    group_id: "topics",
+    item_name: "Implement MCP integration",
+    column_values: {
+      status: "Working on it",
+      date: "2025-06-01",
+      person: "12345"
+    }
+  }
+});
+```
+
+This integration enables AI agents to:
+- Query project data (boards, tasks, team members)
+- Create and update tasks using natural language
+- Generate reports and insights from project metrics
+- Follow guided workflows for project management processes
+
+See [Monday.com Integration Research](research-2.md) for implementation details and [examples/typescript/monday-server.ts](examples/typescript/monday-server.ts) for code examples.
 
 ## Why Use MCP?
 
