@@ -63,4 +63,7 @@ coverage
 
 # OS specific
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Local issue tracking helper
+ISSUES_TODO.md 
