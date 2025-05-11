@@ -1,8 +1,10 @@
 # Contributing to Model Context Protocol For Dummies
 
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![First Timers Only](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://www.firsttimersonly.com/)
-[![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+<div align="center">
+<a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+<a href="https://www.firsttimersonly.com/"><img src="https://img.shields.io/badge/first--timers--only-friendly-blue.svg" alt="First Timers Only"></a>
+<a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Code of Conduct"></a>
+</div>
 
 First off, thank you for considering contributing to the MCP For Dummies repository! It's people like you that make this resource valuable for the community.
 

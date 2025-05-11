@@ -123,6 +123,27 @@
             display: inline-block;
             margin: 5px 0;
         }
+        /* Style specifically for badge links */
+        .content a[href*="img.shields.io"],
+        .content a:has(img[src*="img.shields.io"]) {
+            display: inline-block;
+            margin: 0 4px 10px 4px;
+            text-decoration: none;
+        }
+        /* Style for badge images anywhere */
+        .content img[src*="img.shields.io"] {
+            display: inline-block;
+            margin: 0;
+            vertical-align: middle;
+        }
+        /* Fix for badges at the top of CONTRIBUTING.md */
+        .content > p:first-of-type a:has(img),
+        .content > p:nth-of-type(1) a:has(img),
+        .content > p:nth-of-type(2) a:has(img),
+        .content > p:nth-of-type(3) a:has(img) {
+            display: inline-block;
+            margin: 0 4px 10px 4px;
+        }
         h1, h2, h3, h4, h5, h6 {
             color: #24292e;
             border-bottom: 1px solid #eaecef;
@@ -179,6 +200,34 @@
             border-top: 1px solid #e1e4e8;
             color: #6a737d;
             font-size: 0.9em;
+        }
+        /* Style for standalone badge-like elements (first-timers-only, PRs welcome, etc.) */
+        .content span[class*="badge"],
+        .content span.badge,
+        .content a.badge,
+        .content code:not(pre code) {
+            display: inline-block;
+            padding: 0.2em 0.6em;
+            margin: 0 0.2em;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            background-color: #f3f3f3;
+            color: #24292e;
+        }
+        /* Fix standalone labels like "PRs welcome" etc. */
+        .content a:has(img[alt*="Welcome"]),
+        .content a:has(img[alt*="friendly"]),
+        .content a:has(img[alt*="Covenant"]),
+        .content img[alt*="Welcome"],
+        .content img[alt*="friendly"],
+        .content img[alt*="Covenant"] {
+            display: inline-block;
+            margin: 0 4px;
         }
     </style>
 </head>
@@ -303,52 +352,20 @@
                     const existingHeaderImg = mainHeader.querySelector('img');
                     if (existingHeaderImg) existingHeaderImg.remove();
                     
-                    // Special handling for research files to ensure HTML badges render correctly
+                    // Render the content
+                    const contentElement = document.getElementById('content');
+                    contentElement.innerHTML = marked.parse(markdownText);
+                    
+                    // Post-process all pages for consistent styling
+                    processBadges(contentElement);
+                    
+                    // Specific handling for different document types
                     if (filePath.includes('research-')) {
-                        logDebug(`Rendering research file with special handling: ${filePath}`);
-                        const contentElement = document.getElementById('content');
-                        
-                        // Parse markdown with HTML enabled
-                        const renderedContent = marked.parse(markdownText);
-                        contentElement.innerHTML = renderedContent;
-                        logDebug(`Research content rendered, character count: ${renderedContent.length}`);
-                        
-                        // Process center divs to ensure badges are displayed properly
-                        const centerDivs = contentElement.querySelectorAll('div[align="center"]');
-                        logDebug(`Found ${centerDivs.length} center-aligned divs`);
-                        
-                        // Ensure badges in center divs are displayed properly
-                        centerDivs.forEach(div => {
-                            // Find all badges (links with img inside them)
-                            const badgeLinks = div.querySelectorAll('a');
-                            logDebug(`Processing div with ${badgeLinks.length} badge links`);
-                            
-                            // If this div contains badges, ensure they're displayed inline
-                            if (badgeLinks.length > 0) {
-                                // Apply styling to ensure badges display in a row
-                                badgeLinks.forEach(link => {
-                                    link.style.display = 'inline-block';
-                                    link.style.margin = '0 4px';
-                                    
-                                    // Make sure the img inside is also inline
-                                    const img = link.querySelector('img');
-                                    if (img) {
-                                        img.style.display = 'inline-block';
-                                        img.style.margin = '5px 0';
-                                    }
-                                });
-                            }
-                        });
-                        
-                        // Fix placeholder images (especially in research-2.md)
-                        const placeholderImages = contentElement.querySelectorAll('img[src*="placeholder"]');
-                        logDebug(`Found ${placeholderImages.length} placeholder images`);
-                        
-                        // Add any special styling for badges
-                        const badges = contentElement.querySelectorAll('a img[src*="img.shields.io"]');
-                        logDebug(`Found ${badges.length} badge images`);
-                    } else {
-                        document.getElementById('content').innerHTML = marked.parse(markdownText);
+                        logDebug(`Processing research file: ${filePath}`);
+                        processResearchFile(contentElement);
+                    } else if (filePath === 'CONTRIBUTING.md') {
+                        logDebug(`Processing CONTRIBUTING.md file`);
+                        processContributingFile(contentElement);
                     }
                 }
 
@@ -356,6 +373,126 @@
                 document.getElementById('content').innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
                 console.error('Error loading markdown:', error);
                 logDebug(`ERROR: ${error.message}`);
+            }
+        }
+        
+        // Process badges throughout the document
+        function processBadges(element) {
+            // Find all badges (links containing shield.io images)
+            const badgeLinks = element.querySelectorAll('a:has(img[src*="img.shields.io"])');
+            logDebug(`Found ${badgeLinks.length} badge links`);
+            
+            badgeLinks.forEach(link => {
+                link.style.display = 'inline-block';
+                link.style.margin = '0 4px 10px 4px';
+                link.style.textDecoration = 'none';
+                
+                // Make sure the img inside is also styled correctly
+                const img = link.querySelector('img');
+                if (img) {
+                    img.style.display = 'inline-block';
+                    img.style.margin = '0';
+                    img.style.verticalAlign = 'middle';
+                }
+            });
+            
+            // Also handle standalone badge images
+            const badgeImages = element.querySelectorAll('img[src*="img.shields.io"]');
+            logDebug(`Found ${badgeImages.length} badge images`);
+            
+            badgeImages.forEach(img => {
+                if (!img.parentElement.matches('a')) {
+                    img.style.display = 'inline-block';
+                    img.style.margin = '0 4px';
+                    img.style.verticalAlign = 'middle';
+                }
+            });
+        }
+        
+        // Special processing for research files
+        function processResearchFile(element) {
+            // Process center divs
+            const centerDivs = element.querySelectorAll('div[align="center"]');
+            logDebug(`Found ${centerDivs.length} center-aligned divs`);
+            
+            // Fix placeholder images
+            const placeholderImages = element.querySelectorAll('img[src*="placeholder"]');
+            logDebug(`Found ${placeholderImages.length} placeholder images`);
+            
+            placeholderImages.forEach(img => {
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.style.borderRadius = '6px';
+                img.style.margin = '20px auto';
+                img.style.display = 'block';
+                img.style.backgroundColor = '#f6f8fa';
+                img.style.border = '1px solid #ddd';
+            });
+        }
+        
+        // Special processing for CONTRIBUTING.md
+        function processContributingFile(element) {
+            // First check if the badges are already in a center div (our updated format)
+            const centerDivsWithBadges = Array.from(element.querySelectorAll('div[align="center"]'))
+                .filter(div => div.querySelectorAll('a:has(img[src*="img.shields.io"])').length > 0);
+            
+            if (centerDivsWithBadges.length > 0) {
+                logDebug(`Found ${centerDivsWithBadges.length} center divs with badges in CONTRIBUTING.md`);
+                
+                // Apply styling to these existing divs
+                centerDivsWithBadges.forEach(div => {
+                    div.style.textAlign = 'center';
+                    div.style.margin = '20px 0';
+                    
+                    // Process badges within this div
+                    const badges = div.querySelectorAll('a:has(img)');
+                    badges.forEach(badge => {
+                        badge.style.display = 'inline-block';
+                        badge.style.margin = '0 4px';
+                        
+                        // Style the image
+                        const img = badge.querySelector('img');
+                        if (img) {
+                            img.style.display = 'inline-block';
+                            img.style.margin = '0';
+                            img.style.verticalAlign = 'middle';
+                        }
+                    });
+                });
+                
+                return; // Badges already processed, no need for further handling
+            }
+            
+            // Handle the case of badges in paragraph tags (original format)
+            const topBadges = element.querySelectorAll('p:nth-of-type(-n+3) a:has(img)');
+            logDebug(`Found ${topBadges.length} badges in paragraphs at top of CONTRIBUTING.md`);
+            
+            if (topBadges.length > 0) {
+                const badgeContainer = document.createElement('div');
+                badgeContainer.style.textAlign = 'center';
+                badgeContainer.style.margin = '20px 0';
+                
+                // Move all badges to the container
+                topBadges.forEach(badge => {
+                    const originalParent = badge.parentElement;
+                    badgeContainer.appendChild(badge.cloneNode(true));
+                    
+                    // If this is the only child of its parent, remove the parent
+                    if (originalParent.childNodes.length === 1) {
+                        originalParent.remove();
+                    } else {
+                        badge.remove();
+                    }
+                });
+                
+                // Insert the badge container after the h1
+                const h1 = element.querySelector('h1');
+                if (h1 && h1.nextSibling) {
+                    h1.parentNode.insertBefore(badgeContainer, h1.nextSibling);
+                }
+                
+                // Process badges in the new container
+                processBadges(badgeContainer);
             }
         }
 
